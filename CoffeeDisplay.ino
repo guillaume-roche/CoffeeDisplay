@@ -1,11 +1,17 @@
-// include the library code:
+// includes:
+#include <EEPROM.h>
 #include <LiquidCrystal.h>
+
+const char leftButton = 3;
+const char rightButton = 2;
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
 
-// Grain caracters
+// Grain characters
 #define GRAIN 0
+#define LEFT_ARROW 1
+#define RIGHT_ARROW 2
 
 byte grain[8] = {
   0b00000,
@@ -18,6 +24,28 @@ byte grain[8] = {
   0b00000
 };
 
+byte leftArrow[8] = {
+  0b00000,
+  0b00000,
+  0b00010,
+  0b00110,
+  0b01110,
+  0b00110,
+  0b00010,
+  0b00000
+};
+
+byte rightArrow[8] = {
+  0b00000,
+  0b00000,
+  0b01000,
+  0b01100,
+  0b01110,
+  0b01100,
+  0b01000,
+  0b00000
+};
+
 // Coffees
 #define COFFEE_FRANCAIS  0
 #define COFFEE_ITALIEN   1
@@ -26,54 +54,80 @@ byte grain[8] = {
 #define COFFEE_BRESILIEN 4
 #define COFFEE_COSTARICA 5
 #define COFFEE_PAPOUASIE 6
+#define COFFEE_MAX       7
 
 char leftCoffee = 0;
 char rightCoffee = 0;
 
-volatile int leftSelection = 0;
-volatile int rightSelection = 0;
-
 void setup() {
-  // Create grain caracters
+  pinMode(leftButton, INPUT);
+  pinMode(rightButton, INPUT);
+
+  // Create custom caracters
   lcd.createChar(GRAIN, grain);
+  lcd.createChar(LEFT_ARROW, leftArrow);
+  lcd.createChar(RIGHT_ARROW, rightArrow);
   
-  // set up the LCD's number of columns and rows: 
+  // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   
-  // Print left coffee
-  lcd.print(getCoffee(leftCoffee));
+  unsigned char value;
+  value = EEPROM.read(0);
+  if (value < COFFEE_MAX) {
+    leftCoffee = value;
+  }
+  value = EEPROM.read(1);
+  if (value < COFFEE_MAX) {
+    rightCoffee = value;
+  }
   
-  // Print right coffee right aligned
-  lcd.setCursor(16 - getCoffee(rightCoffee).length(), 0);
-  lcd.print(getCoffee(rightCoffee));
-  
-  lcd.setCursor(0, 1);
-  lcd.write((uint8_t) GRAIN);
-  lcd.write((uint8_t) GRAIN);
-  lcd.write((uint8_t) GRAIN);
-  
-  // Attach interrupt to handle edit mode on pin 2
-  attachInterrupt(0, switchMode, LOW);
+  printLeft();
+  printRight();
 }
 
-void switchMode() {
-  leftSelection++;
-  if (leftSelection == 7) {
-    leftSelection = 0;
+void printLeft() {
+  lcd.home();
+  lcd.write((uint8_t) LEFT_ARROW);
+  lcd.print(" " + getCoffee(leftCoffee) + " ");
+  for (char i = 0; i < getStrength(leftCoffee); i++) {
+    lcd.write((uint8_t) GRAIN);
+  }
+  lcd.print("      ");
+}
+
+void printRight() {
+  lcd.setCursor(0, 1);
+  lcd.write((uint8_t) RIGHT_ARROW);
+  lcd.print(" " + getCoffee(rightCoffee) + " ");
+  for (char i = 0; i < getStrength(rightCoffee); i++) {
+    lcd.write((uint8_t) GRAIN);
+  }
+  lcd.print("      ");
+}
+
+void nextCoffee(char &coffee) {
+  coffee++;
+  if (coffee == COFFEE_MAX) {
+    coffee = 0;
   }
 }
 
 void loop() {
-  if (leftSelection != leftCoffee)
+  if (digitalRead(leftButton) == HIGH)
   {
-    lcd.clear();
-    lcd.setCursor(16 - getCoffee(rightSelection).length(), 0);
-    lcd.print(getCoffee(rightSelection));
-    
-    lcd.setCursor(0, 0);
-    lcd.print(getCoffee(leftSelection));
+    nextCoffee(leftCoffee);
+    printLeft();
+    EEPROM.write(0, leftCoffee);
+    delay(1500);
   }
-  delay(1000);
+  else if (digitalRead(rightButton) == HIGH)
+  {
+    nextCoffee(rightCoffee);
+    printRight();
+    EEPROM.write(1, rightCoffee);
+    delay(1500);
+  }
+
 }
 
 static String getCoffee(const char type) {
