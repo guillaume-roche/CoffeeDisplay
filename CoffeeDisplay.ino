@@ -46,6 +46,12 @@ byte rightArrow[8] = {
   0b00000
 };
 
+typedef struct _coffee_t {
+  int id;
+  char *name;
+  char strength;
+} coffee_t;
+
 // Coffees
 #define COFFEE_FRANCAIS  0
 #define COFFEE_ITALIEN   1
@@ -55,6 +61,17 @@ byte rightArrow[8] = {
 #define COFFEE_COSTARICA 5
 #define COFFEE_PAPOUASIE 6
 #define COFFEE_MAX       7
+
+coffee_t coffeesList[] = {
+{ COFFEE_FRANCAIS, "Francais", 4 },
+{ COFFEE_ITALIEN, "Italien", 4 },
+{ COFFEE_MOKA, "Moka", 3 },
+{ COFFEE_COLOMBIE, "Colombie", 3 },
+{ COFFEE_BRESILIEN, "Bresilien", 2 },
+{ COFFEE_COSTARICA, "Costa Rica", 2 },
+{ COFFEE_PAPOUASIE, "Papouasie", 3 },
+{ COFFEE_MAX, NULL, 0 },
+};
 
 char leftCoffee = 0;
 char rightCoffee = 0;
@@ -131,41 +148,11 @@ void loop() {
 }
 
 static String getCoffee(const char type) {
-  switch(type) {
-    case COFFEE_FRANCAIS:
-      return "Francais";
-    case COFFEE_ITALIEN:
-      return "Italien";
-    case COFFEE_MOKA:
-      return "Moka";
-    case COFFEE_COLOMBIE:
-      return "Colombie";
-    case COFFEE_BRESILIEN:
-      return "Bresilien";
-    case COFFEE_COSTARICA:
-      return "Costa Rica";
-    case COFFEE_PAPOUASIE:
-      return "Papouasie";
-    default:
-      return "";
-  }
+  return coffeesList[type].name;
 }
 
 static char getStrength(const char type) {
-  switch(type) {
-    case COFFEE_FRANCAIS:
-    case COFFEE_ITALIEN:
-      return 4;
-    case COFFEE_MOKA:
-    case COFFEE_COLOMBIE:
-    case COFFEE_PAPOUASIE:
-      return 3;
-    case COFFEE_BRESILIEN:
-    case COFFEE_COSTARICA:
-      return 2;
-    default:
-      return 0;
-  }
+  return coffeesList[type].strength;
 }
 
 
