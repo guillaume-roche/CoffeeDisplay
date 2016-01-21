@@ -60,7 +60,10 @@ typedef struct _coffee_t {
 #define COFFEE_BRESILIEN 4
 #define COFFEE_COSTARICA 5
 #define COFFEE_PAPOUASIE 6
-#define COFFEE_MAX       7
+#define COFFEE_MEXICAIN  7
+#define COFFEE_INDIEN    8
+#define COFFEE_EXPRESSO  9
+#define COFFEE_MAX       10
 
 coffee_t coffeesList[] = {
 { COFFEE_FRANCAIS, "Francais", 4 },
@@ -70,6 +73,9 @@ coffee_t coffeesList[] = {
 { COFFEE_BRESILIEN, "Bresilien", 2 },
 { COFFEE_COSTARICA, "Costa Rica", 2 },
 { COFFEE_PAPOUASIE, "Papouasie", 3 },
+{ COFFEE_MEXICAIN , "Mexicain", 4 },
+{ COFFEE_INDIEN, "Inde", 4 },
+{ COFFEE_EXPRESSO, "Expresso", 4 },
 { COFFEE_MAX, NULL, 0 },
 };
 
