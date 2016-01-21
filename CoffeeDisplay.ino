@@ -107,7 +107,7 @@ void printRight() {
 
 void nextCoffee(char &coffee) {
   coffee++;
-  if (coffee == COFFEE_MAX) {
+  if (coffee >= COFFEE_MAX) {
     coffee = 0;
   }
 }
