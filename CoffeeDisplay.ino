@@ -158,8 +158,8 @@ static char getStrength(const char type) {
       return 4;
     case COFFEE_MOKA:
     case COFFEE_COLOMBIE:
-    case COFFEE_PAPOUASIE:
       return 3;
+    case COFFEE_PAPOUASIE:
     case COFFEE_BRESILIEN:
     case COFFEE_COSTARICA:
       return 2;
